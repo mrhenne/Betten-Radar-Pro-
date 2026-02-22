@@ -67,6 +67,19 @@
             background: #f1f5f9;
         }
 
+        .stepper-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .stepper-btn:active { transform: scale(0.9); }
+
         @media print {
             .no-print { display: none !important; }
             body { background: white !important; padding: 0 !important; }
@@ -76,7 +89,7 @@
             th { border-bottom: 3px solid #000 !important; color: black !important; padding: 10px !important; font-weight: bold !important; }
             td { border-bottom: 1px solid #000 !important; padding: 10px !important; color: black !important; }
             input, select { border: none !important; appearance: none; background: transparent !important; font-weight: bold !important; width: auto !important; color: black !important; }
-            .drag-handle { display: none !important; }
+            .drag-handle, .stepper-btn { display: none !important; }
         }
     </style>
 </head>
@@ -104,31 +117,31 @@
             </div>
         </div>
 
-        <!-- TOTALS & MASTER TIMESTAMP -->
-        <div class="lg:col-span-3 liquid-glass rounded-[2.5rem] p-7 grid grid-cols-2 md:grid-cols-5 gap-6 shadow-xl">
+        <!-- TOTALS & LAST CHECKED TIMESTAMP -->
+        <div class="lg:col-span-3 liquid-glass rounded-[2.5rem] p-7 grid grid-cols-2 md:grid-cols-6 gap-6 shadow-xl">
             <div class="text-center md:border-r border-slate-300">
-                <p class="text-[10px] font-black text-slate-600 uppercase mb-2 tracking-widest">Entlassungen</p>
-                <p id="sum-entl" class="text-4xl font-black text-[#6a9a00]">0</p>
+                <p class="text-[10px] font-black text-slate-600 uppercase mb-2 tracking-widest">Entl.</p>
+                <p id="sum-entl" class="text-3xl font-black text-[#6a9a00]">0</p>
             </div>
             <div class="text-center md:border-r border-slate-300">
-                <p class="text-[10px] font-black text-slate-600 uppercase mb-2 tracking-widest">Betten (M)</p>
-                <p id="sum-m" class="text-4xl font-black text-[#004a99]">0</p>
+                <p class="text-[10px] font-black text-slate-600 uppercase mb-2 tracking-widest">Bett (M)</p>
+                <p id="sum-m" class="text-3xl font-black text-[#004a99]">0</p>
             </div>
             <div class="text-center md:border-r border-slate-300">
-                <p class="text-[10px] font-black text-slate-600 uppercase mb-2 tracking-widest">Betten (W)</p>
-                <p id="sum-w" class="text-4xl font-black text-pink-700">0</p>
+                <p class="text-[10px] font-black text-slate-600 uppercase mb-2 tracking-widest">Bett (W)</p>
+                <p id="sum-w" class="text-3xl font-black text-pink-700">0</p>
             </div>
             <div class="text-center md:border-r border-slate-300">
-                <p class="text-[10px] font-black text-slate-600 uppercase mb-2 tracking-widest">Iso-Plätze</p>
-                <p id="sum-iso" class="text-4xl font-black text-amber-700">0</p>
+                <p class="text-[10px] font-black text-slate-600 uppercase mb-2 tracking-widest">Zimmer</p>
+                <p id="sum-rooms" class="text-3xl font-black text-slate-800">0</p>
             </div>
-            <div class="text-center col-span-2 md:col-span-1 bg-white border border-slate-200 rounded-3xl flex flex-col justify-center p-3 shadow-inner">
-                <p class="text-[10px] font-black text-[#82bc00] uppercase mb-1 tracking-widest">Last Check</p>
-                <p id="master-check-time" class="text-2xl font-black text-slate-900 tracking-tighter">--:--</p>
-                <div class="mt-1 flex items-center justify-center gap-1">
-                    <span class="w-1.5 h-1.5 rounded-full bg-[#82bc00]"></span>
-                    <span class="text-[9px] font-black text-slate-600 uppercase">Lokal</span>
-                </div>
+            <div class="text-center md:border-r border-slate-300">
+                <p class="text-[10px] font-black text-slate-600 uppercase mb-2 tracking-widest">Iso</p>
+                <p id="sum-iso" class="text-3xl font-black text-amber-700">0</p>
+            </div>
+            <div class="text-center bg-white border border-slate-200 rounded-3xl flex flex-col justify-center p-2 shadow-inner">
+                <p class="text-[9px] font-black text-[#82bc00] uppercase mb-1 tracking-widest">Last Checkt</p>
+                <p id="master-check-time" class="text-xl font-black text-slate-900 tracking-tighter">--:--</p>
             </div>
         </div>
     </div>
@@ -140,14 +153,14 @@
                  <svg viewBox="0 0 24 24" class="w-10 h-10 text-[#82bc00]" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
             </div>
             <div>
-                <h1 class="text-4xl font-black text-slate-900 tracking-tighter leading-none mb-1">Betten-Radar</h1>
+                <h1 class="text-4xl font-black text-slate-900 tracking-tighter leading-none mb-1 text-nowrap">Betten-Radar</h1>
                 <p class="text-[13px] font-black text-[#6a9a00] uppercase tracking-[0.4em]">Helios Duisburg</p>
             </div>
         </div>
         
         <div class="flex bg-slate-200 p-1.5 rounded-[1.8rem] shadow-inner border border-slate-300 no-print">
-            <button id="tab-betten" onclick="switchTab('betten')" class="px-8 py-3 rounded-[1.4rem] text-[11px] font-black uppercase tracking-widest transition-all tab-active">🏥 Betten</button>
-            <button id="tab-iso" onclick="switchTab('iso')" class="px-8 py-3 rounded-[1.4rem] text-[11px] font-black uppercase tracking-widest transition-all text-slate-700 hover:text-slate-900">☣️ Isolation</button>
+            <button id="tab-betten" onclick="switchTab('betten')" class="px-8 py-3 rounded-[1.4rem] text-[11px] font-black uppercase tracking-widest transition-all tab-active text-nowrap">🏥 Betten & Zimmer</button>
+            <button id="tab-iso" onclick="switchTab('iso')" class="px-8 py-3 rounded-[1.4rem] text-[11px] font-black uppercase tracking-widest transition-all text-slate-700 hover:text-slate-900 text-nowrap">☣️ Isolation</button>
         </div>
     </header>
 
@@ -168,7 +181,7 @@
     <!-- FOOTER CONTROLS -->
     <footer class="mt-10 flex flex-col md:flex-row gap-6 justify-between items-center no-print">
         <div class="flex gap-3 w-full md:w-auto">
-            <input type="text" id="add-station-input" placeholder="Station (z.B. 3A)" class="flex-1 md:w-72 bg-white px-6 py-4 rounded-[1.8rem] border border-slate-300 focus:ring-4 focus:ring-[#82bc00]/30 outline-none font-bold text-sm shadow-inner transition-all">
+            <input type="text" id="add-station-input" placeholder="Station hinzufügen" class="flex-1 md:w-72 bg-white px-6 py-4 rounded-[1.8rem] border border-slate-300 focus:ring-4 focus:ring-[#82bc00]/30 outline-none font-bold text-sm shadow-inner transition-all">
             <button onclick="addStation()" class="bg-[#82bc00] text-white px-8 py-4 rounded-[1.8rem] font-black text-[11px] uppercase tracking-widest hover:bg-[#6a9a00] transition-all shadow-xl active:scale-95 border-b-4 border-[#6a9a00]">Add+</button>
         </div>
         
@@ -190,7 +203,7 @@
     </footer>
 </div>
 
-<!-- Modal für Confirmation (Henne's Security) -->
+<!-- Modal für Confirmation -->
 <div id="custom-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-[100] p-4 no-print">
     <div class="liquid-glass rounded-[2rem] p-8 max-w-sm w-full shadow-2xl text-center border-2 border-slate-200">
         <h4 id="modal-title" class="text-xl font-black mb-3 text-slate-900 uppercase tracking-tight">Bestätigung</h4>
@@ -203,13 +216,12 @@
 </div>
 
 <script>
-    // --- State Management ---
     let appState = {
         currentTab: 'betten',
         znaStatus: { type: 'normal', color: '#82bc00', label: 'Normalbetrieb' },
         stations: [
-            { id: '1a', name: 'Station 1A', entl: 0, m: 0, w: 0, isoType: 'Keine', isoCount: 0, lastCheck: '--:--', rawTimestamp: 0 },
-            { id: 'zna_holding', name: 'ZNA Holding', entl: 0, m: 0, w: 0, isoType: 'Keine', isoCount: 0, lastCheck: '--:--', rawTimestamp: 0 }
+            { id: '1a', name: 'Station 1A', entl: 0, m: 0, w: 0, rooms: 0, isoType: 'Keine', isoCount: 0, lastCheck: '--:--', rawTimestamp: 0 },
+            { id: 'zna_holding', name: 'ZNA Holding', entl: 0, m: 0, w: 0, rooms: 0, isoType: 'Keine', isoCount: 0, lastCheck: '--:--', rawTimestamp: 0 }
         ]
     };
 
@@ -219,6 +231,9 @@
         const saved = localStorage.getItem('helios_radar_data');
         if (saved) {
             appState = JSON.parse(saved);
+            appState.stations.forEach(s => {
+                if (s.rooms === undefined) s.rooms = 0;
+            });
         }
         updateDashboard();
         updateStatusUI();
@@ -230,7 +245,6 @@
         updateDashboard();
     }
 
-    // --- Tab Switch ---
     window.switchTab = function(tab) {
         appState.currentTab = tab;
         document.getElementById('tab-betten').className = `px-8 py-3 rounded-[1.4rem] text-[11px] font-black uppercase tracking-widest transition-all ${tab === 'betten' ? 'tab-active' : 'text-slate-700'}`;
@@ -239,9 +253,8 @@
         saveData();
     };
 
-    // --- Dashboard ---
     function updateDashboard() {
-        let entl = 0, m = 0, w = 0, iso = 0;
+        let entl = 0, m = 0, w = 0, rooms = 0, iso = 0;
         let latestTime = "--:--";
         let latestRaw = 0;
 
@@ -249,6 +262,7 @@
             entl += (Number(s.entl) || 0);
             m += (Number(s.m) || 0);
             w += (Number(s.w) || 0);
+            rooms += (Number(s.rooms) || 0);
             iso += (Number(s.isoCount) || 0);
             if (s.rawTimestamp && s.rawTimestamp > latestRaw) {
                 latestRaw = s.rawTimestamp;
@@ -259,6 +273,7 @@
         document.getElementById('sum-entl').innerText = entl;
         document.getElementById('sum-m').innerText = m;
         document.getElementById('sum-w').innerText = w;
+        document.getElementById('sum-rooms').innerText = rooms;
         document.getElementById('sum-iso').innerText = iso;
         document.getElementById('master-check-time').innerText = latestTime;
     }
@@ -275,7 +290,6 @@
         label.style.color = (status.color === '#fbbf24') ? '#92400e' : status.color;
     }
 
-    // --- Actions ---
     window.setZNAStatus = function(type, color, label) {
         appState.znaStatus = { type, color, label };
         updateStatusUI();
@@ -287,6 +301,16 @@
         if (station) {
             station[field] = (field === 'isoType' || field === 'lastCheck') ? val : (parseInt(val) || 0);
             saveData();
+            render();
+        }
+    };
+
+    window.stepVal = function(id, field, step) {
+        const station = appState.stations.find(s => s.id === id);
+        if (station) {
+            station[field] = Math.max(0, (Number(station[field]) || 0) + step);
+            saveData();
+            render();
         }
     };
 
@@ -302,7 +326,6 @@
         }
     };
 
-    // --- Drag & Drop Core ---
     window.handleDragStart = function(e, id) {
         draggedId = id;
         e.dataTransfer.effectAllowed = 'move';
@@ -333,7 +356,6 @@
         render();
     };
 
-    // --- Custom Modal System ---
     function showConfirm(text, onConfirm) {
         const modal = document.getElementById('custom-modal');
         const modalText = document.getElementById('modal-text');
@@ -361,9 +383,9 @@
     }
 
     window.resetValues = function() {
-        showConfirm('Alle Bettenzahlen und Entlassungen zurücksetzen? (Stationen bleiben erhalten)', () => {
+        showConfirm('Alle Daten zurücksetzen? (Stationen bleiben erhalten)', () => {
             appState.stations.forEach(s => {
-                s.entl = 0; s.m = 0; s.w = 0; s.isoCount = 0; s.isoType = 'Keine';
+                s.entl = 0; s.m = 0; s.w = 0; s.rooms = 0; s.isoCount = 0; s.isoType = 'Keine';
                 s.lastCheck = '--:--'; s.rawTimestamp = 0;
             });
             appState.znaStatus = { type: 'normal', color: '#82bc00', label: 'Normalbetrieb' };
@@ -379,7 +401,7 @@
         if (!name) return;
         const id = 'st_' + Date.now();
         appState.stations.push({
-            id, name, entl: 0, m: 0, w: 0, isoType: 'Keine', isoCount: 0, lastCheck: '--:--', rawTimestamp: 0
+            id, name, entl: 0, m: 0, w: 0, rooms: 0, isoType: 'Keine', isoCount: 0, lastCheck: '--:--', rawTimestamp: 0
         });
         input.value = '';
         render();
@@ -388,14 +410,24 @@
 
     window.deleteStation = function(id) {
         const station = appState.stations.find(s => s.id === id);
-        showConfirm(`Station "${station?.name}" wirklich aus der Liste entfernen?`, () => {
+        showConfirm(`Station "${station?.name}" entfernen?`, () => {
             appState.stations = appState.stations.filter(s => s.id !== id);
             render();
             saveData();
         });
     };
 
-    // --- Rendering ---
+    function createStepper(id, field, val, bgClass = 'bg-white', textClass = 'text-slate-900') {
+        return `
+            <div class="flex items-center justify-center gap-1">
+                <button onclick="stepVal('${id}', '${field}', -1)" class="stepper-btn bg-slate-200 text-slate-700 hover:bg-slate-300">-</button>
+                <input type="number" value="${val}" onchange="updateVal('${id}', '${field}', this.value)" 
+                    class="w-12 p-2 rounded-xl ${bgClass} text-center font-black outline-none border-2 border-slate-200 focus:border-[#82bc00] shadow-sm ${textClass}">
+                <button onclick="stepVal('${id}', '${field}', 1)" class="stepper-btn bg-slate-200 text-slate-700 hover:bg-slate-300">+</button>
+            </div>
+        `;
+    }
+
     function render() {
         const head = document.getElementById('table-head');
         const body = document.getElementById('tableBody');
@@ -405,9 +437,10 @@
             head.innerHTML = `<tr>
                 <th class="p-6 text-[11px] font-black uppercase text-slate-800 tracking-[0.2em] w-12"></th>
                 <th class="p-6 text-[11px] font-black uppercase text-slate-800 tracking-[0.2em]">Station</th>
-                <th class="p-6 text-center text-[11px] font-black uppercase text-slate-800 tracking-[0.2em]">Entlassungen</th>
-                <th class="p-6 text-center text-[11px] font-black uppercase text-slate-800 tracking-[0.2em]">Betten (M)</th>
-                <th class="p-6 text-center text-[11px] font-black uppercase text-slate-800 tracking-[0.2em]">Betten (W)</th>
+                <th class="p-6 text-center text-[11px] font-black uppercase text-slate-800 tracking-[0.2em]">Entl.</th>
+                <th class="p-6 text-center text-[11px] font-black uppercase text-slate-800 tracking-[0.2em]">Bett (M)</th>
+                <th class="p-6 text-center text-[11px] font-black uppercase text-slate-800 tracking-[0.2em]">Bett (W)</th>
+                <th class="p-6 text-center text-[11px] font-black uppercase text-slate-800 tracking-[0.2em]">Freie Zimmer</th>
                 <th class="p-6 text-center text-[11px] font-black uppercase text-slate-800 tracking-[0.2em]">Check</th>
                 <th class="p-6 text-right no-print">Optionen</th>
             </tr>`;
@@ -442,13 +475,16 @@
                     ${dragHandle}
                     <td class="p-6 font-black text-slate-900">${s.name}</td>
                     <td class="p-6 text-center">
-                        <input type="number" value="${s.entl}" onchange="updateVal('${s.id}', 'entl', this.value)" class="w-16 p-3 rounded-2xl bg-white text-center font-black outline-none border-2 border-slate-200 focus:border-[#82bc00] shadow-sm text-slate-900">
+                        ${createStepper(s.id, 'entl', s.entl)}
                     </td>
                     <td class="p-6 text-center">
-                        <input type="number" value="${s.m}" onchange="updateVal('${s.id}', 'm', this.value)" class="w-16 p-3 rounded-2xl bg-blue-50 text-center font-black outline-none border-2 border-blue-200 focus:border-[#82bc00] shadow-sm text-blue-900">
+                        ${createStepper(s.id, 'm', s.m, 'bg-blue-50', 'text-blue-900')}
                     </td>
                     <td class="p-6 text-center">
-                        <input type="number" value="${s.w}" onchange="updateVal('${s.id}', 'w', this.value)" class="w-16 p-3 rounded-2xl bg-pink-50 text-center font-black outline-none border-2 border-pink-200 focus:border-[#82bc00] shadow-sm text-pink-900">
+                        ${createStepper(s.id, 'w', s.w, 'bg-pink-50', 'text-pink-900')}
+                    </td>
+                    <td class="p-6 text-center">
+                        ${createStepper(s.id, 'rooms', s.rooms, 'bg-slate-50', 'text-slate-900')}
                     </td>
                     <td class="p-6 text-center">
                         <span class="text-[11px] font-black text-slate-700 bg-white px-4 py-2 rounded-xl border-2 border-slate-100 shadow-inner">${s.lastCheck}</span>
@@ -474,7 +510,7 @@
                         </select>
                     </td>
                     <td class="p-6 text-center">
-                        <input type="number" value="${s.isoCount}" onchange="updateVal('${s.id}', 'isoCount', this.value)" class="w-16 p-3 rounded-2xl bg-amber-50 text-center font-black outline-none border-2 border-amber-200 focus:border-[#82bc00] shadow-sm text-amber-900">
+                        ${createStepper(s.id, 'isoCount', s.isoCount, 'bg-amber-50', 'text-amber-900')}
                     </td>
                     <td class="p-6 text-center text-[11px] font-black text-slate-700">${s.lastCheck}</td>
                     <td class="p-6 text-right no-print">
@@ -488,7 +524,6 @@
         });
     }
 
-    // Initialize
     loadData();
 </script>
 </body>
