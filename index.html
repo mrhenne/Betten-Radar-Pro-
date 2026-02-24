@@ -2,529 +2,2426 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0a0a0a">
     <title>Betten-Radar | Helios Duisburg</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --helios-green: #82bc00;
-            --helios-dark-green: #6a9a00;
-            --helios-blue: #004a99;
-            --glass-white: rgba(255, 255, 255, 0.85);
-            --glass-heavy: rgba(255, 255, 255, 0.95);
-        }
-        
-        body {
-            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-            background-attachment: fixed;
-            min-height: 100vh;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            color: #0f172a;
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .liquid-glass {
-            background: var(--glass-white);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
+        :root {
+            --helios-green: #7ed321;
+            --helios-green-glow: rgba(126, 211, 33, 0.4);
+            --helios-blue: #0066cc;
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --glass-highlight: rgba(255, 255, 255, 0.15);
+            --text-primary: rgba(255, 255, 255, 0.95);
+            --text-secondary: rgba(255, 255, 255, 0.6);
+            --text-muted: rgba(255, 255, 255, 0.4);
+            --bg-base: #0a0a0a;
+            --safe-area-inset-top: env(safe-area-inset-top, 20px);
+            --safe-area-inset-bottom: env(safe-area-inset-bottom, 20px);
+        }
+
+        body.light-mode {
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(0, 0, 0, 0.08);
+            --glass-highlight: rgba(255, 255, 255, 0.9);
+            --text-primary: rgba(0, 0, 0, 0.9);
+            --text-secondary: rgba(0, 0, 0, 0.6);
+            --text-muted: rgba(0, 0, 0, 0.4);
+            --bg-base: #f0f2f5;
+            --helios-green-glow: rgba(126, 211, 33, 0.3);
+        }
+
+        body.light-mode {
+            background: var(--bg-base);
+        }
+
+        body.light-mode .bg-mesh {
+            background: 
+                radial-gradient(ellipse 80% 50% at 20% 20%, rgba(126, 211, 33, 0.2) 0%, transparent 50%),
+                radial-gradient(ellipse 60% 40% at 80% 80%, rgba(0, 102, 204, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse 40% 60% at 50% 50%, rgba(126, 211, 33, 0.1) 0%, transparent 50%);
+        }
+
+        body.light-mode .liquid-glass {
+            background: rgba(255, 255, 255, 0.75);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        }
+
+        body.light-mode .liquid-glass-heavy {
+            background: rgba(255, 255, 255, 0.9);
             border: 1px solid rgba(0, 0, 0, 0.1);
-            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1);
+            box-shadow: 
+                0 12px 40px rgba(0, 0, 0, 0.12),
+                inset 0 1px 0 rgba(255, 255, 255, 1);
         }
 
-        .status-pulse {
-            animation: pulse-ring 2.5s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+        body.light-mode .bottom-actions::before {
+            background: linear-gradient(to top, rgba(240, 242, 245, 0.98) 0%, rgba(240, 242, 245, 0.8) 70%, transparent 100%);
         }
 
-        @keyframes pulse-ring {
-            0% { transform: scale(0.8); opacity: 0.5; }
-            50% { transform: scale(1.1); opacity: 1; }
-            100% { transform: scale(0.8); opacity: 0.5; }
+        body.light-mode .stepper-btn {
+            background: rgba(0, 0, 0, 0.06);
         }
 
-        .tab-active {
-            background: var(--helios-green) !important;
-            color: white !important;
-            box-shadow: 0 8px 20px -5px rgba(130, 188, 0, 0.5);
-            transform: translateY(-2px);
+        body.light-mode .stepper-btn:active {
+            background: var(--helios-green);
+            color: #fff;
         }
 
-        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
-            -webkit-appearance: none; margin: 0;
+        body.light-mode .field-group {
+            background: rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(0, 0, 0, 0.06);
         }
 
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-
-        .drag-handle {
-            cursor: grab;
-            color: #94a3b8;
-        }
-        .drag-handle:active {
-            cursor: grabbing;
-        }
-        
-        tr.dragging {
-            opacity: 0.5;
-            background: #f1f5f9;
+        body.light-mode .station-time {
+            background: rgba(0, 0, 0, 0.05);
         }
 
-        .stepper-btn {
+        body.light-mode .toast {
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        body.light-mode .modal-input {
+            background: rgba(0, 0, 0, 0.04);
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-mode .notes-textarea {
+            background: rgba(0, 0, 0, 0.03);
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-mode .history-backdrop {
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        body.light-mode .icon-btn {
+            background: rgba(0, 0, 0, 0.04);
+            border-color: rgba(0, 0, 0, 0.08);
+        }
+
+        body.light-mode .zna-btn {
+            background: rgba(0, 0, 0, 0.04);
+            border-color: rgba(0, 0, 0, 0.08);
+        }
+
+        body.light-mode .action-btn.secondary {
+            background: rgba(255, 255, 255, 0.8);
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-mode .iso-type-select {
+            background: rgba(0, 0, 0, 0.04);
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-mode .iso-type-select option {
+            background: #fff;
+            color: #000;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: relative;
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            border: none;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-secondary);
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            font-weight: bold;
-            transition: all 0.2s;
-            user-select: none;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .stepper-btn:active { transform: scale(0.9); }
 
+        .theme-toggle:active {
+            transform: scale(0.92);
+        }
+
+        .theme-toggle .sun-icon,
+        .theme-toggle .moon-icon {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            transition: all 0.3s;
+        }
+
+        .theme-toggle .sun-icon {
+            opacity: 0;
+            transform: rotate(-90deg) scale(0.5);
+        }
+
+        .theme-toggle .moon-icon {
+            opacity: 1;
+            transform: rotate(0deg) scale(1);
+        }
+
+        body.light-mode .theme-toggle .sun-icon {
+            opacity: 1;
+            transform: rotate(0deg) scale(1);
+        }
+
+        body.light-mode .theme-toggle .moon-icon {
+            opacity: 0;
+            transform: rotate(90deg) scale(0.5);
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            background: #0a0a0a;
+            color: var(--text-primary);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background */
+        .bg-mesh {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background: 
+                radial-gradient(ellipse 80% 50% at 20% 20%, rgba(126, 211, 33, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse 60% 40% at 80% 80%, rgba(0, 102, 204, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse 40% 60% at 50% 50%, rgba(126, 211, 33, 0.05) 0%, transparent 50%);
+            animation: meshMove 20s ease-in-out infinite;
+        }
+
+        @keyframes meshMove {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(2deg); }
+        }
+
+        .noise-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
+
+        /* App Container */
+        .app-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding-top: var(--safe-area-inset-top);
+            padding-bottom: var(--safe-area-inset-bottom);
+            overflow: hidden;
+        }
+
+        /* Liquid Glass Effect */
+        .liquid-glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 var(--glass-highlight);
+        }
+
+        .liquid-glass-heavy {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(60px) saturate(200%);
+            -webkit-backdrop-filter: blur(60px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 
+                0 12px 40px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        /* Header */
+        .header {
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+
+        .logo-group {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--helios-green) 0%, #5fa31a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px var(--helios-green-glow);
+        }
+
+        .logo-icon svg {
+            width: 26px;
+            height: 26px;
+            fill: white;
+        }
+
+        .logo-text h1 {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: var(--text-primary);
+        }
+
+        .logo-text span {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--helios-green);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .icon-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            border: none;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .icon-btn:active {
+            transform: scale(0.92);
+            background: var(--glass-highlight);
+        }
+
+        .icon-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* ZNA Status Bar */
+        .zna-status-bar {
+            margin: 0 20px 16px;
+            padding: 16px 20px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .zna-status-bar.status-normal {
+            background: linear-gradient(135deg, rgba(126, 211, 33, 0.15) 0%, rgba(126, 211, 33, 0.05) 100%);
+            border: 1px solid rgba(126, 211, 33, 0.3);
+        }
+
+        .zna-status-bar.status-high {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(251, 191, 36, 0.05) 100%);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        .zna-status-bar.status-crit {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.05) 100%);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            animation: criticalPulse 2s ease-in-out infinite;
+        }
+
+        .zna-status-bar.status-stop {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(139, 92, 246, 0.05) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        @keyframes criticalPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+            50% { box-shadow: 0 0 20px 5px rgba(239, 68, 68, 0.2); }
+        }
+
+        .zna-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .status-dot::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            background: inherit;
+            opacity: 0.3;
+            animation: dotPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes dotPulse {
+            0%, 100% { transform: scale(0.8); opacity: 0.3; }
+            50% { transform: scale(1.2); opacity: 0.1; }
+        }
+
+        .status-dot.green { background: #7ed321; }
+        .status-dot.yellow { background: #fbbf24; }
+        .status-dot.red { background: #ef4444; }
+        .status-dot.purple { background: #8b5cf6; }
+
+        .zna-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .zna-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .zna-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .zna-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .zna-btn:active {
+            transform: scale(0.9);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 0 20px 16px;
+            flex-shrink: 0;
+        }
+
+        .stat-card {
+            padding: 16px 12px;
+            border-radius: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--glass-highlight), transparent);
+        }
+
+        .stat-label {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .stat-value.blue { color: #60a5fa; }
+        .stat-value.pink { color: #f472b6; }
+        .stat-value.amber { color: #fbbf24; }
+        .stat-value.green { color: #7ed321; }
+        .stat-value.white { color: var(--text-primary); }
+
+        /* Tab Navigation */
+        .tab-nav {
+            display: flex;
+            gap: 6px;
+            margin: 0 20px 16px;
+            padding: 6px;
+            border-radius: 18px;
+            flex-shrink: 0;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px 8px;
+            border-radius: 14px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .tab-btn.active {
+            background: var(--helios-green);
+            color: #000;
+            box-shadow: 0 4px 20px var(--helios-green-glow);
+        }
+
+        .tab-btn:active {
+            transform: scale(0.96);
+        }
+
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 0 20px 20px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .content-area::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Station Cards */
+        .station-card {
+            margin-bottom: 14px;
+            border-radius: 24px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .station-card.critical {
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, var(--glass-bg) 100%);
+        }
+
+        .station-header {
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .station-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .station-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .station-time {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px 10px;
+            border-radius: 8px;
+        }
+
+        .station-badge {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            padding: 4px 8px;
+            border-radius: 6px;
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .station-expand {
+            color: var(--text-muted);
+            transition: transform 0.3s;
+        }
+
+        .station-card.expanded .station-expand {
+            transform: rotate(180deg);
+        }
+
+        .station-body {
+            padding: 0 20px 20px;
+            display: none;
+        }
+
+        .station-card.expanded .station-body {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Input Fields */
+        .field-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .field-group {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            padding: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .field-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .stepper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .stepper-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stepper-btn:active {
+            transform: scale(0.9);
+            background: var(--helios-green);
+            color: #000;
+        }
+
+        .stepper-value {
+            flex: 1;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-primary);
+            background: transparent;
+            border: none;
+            outline: none;
+            width: 100%;
+        }
+
+        .stepper-value.blue { color: #60a5fa; }
+        .stepper-value.pink { color: #f472b6; }
+        .stepper-value.amber { color: #fbbf24; }
+        .stepper-value.green { color: #7ed321; }
+
+        /* Quick View Cards */
+        .quick-grid {
+            display: grid;
+            gap: 14px;
+        }
+
+        .quick-card {
+            border-radius: 24px;
+            padding: 20px;
+        }
+
+        .quick-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .quick-card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .quick-card-time {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .quick-stats {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .quick-stat {
+            flex: 1;
+            min-width: 70px;
+            border-radius: 14px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .quick-stat.male {
+            background: linear-gradient(135deg, rgba(96, 165, 250, 0.2) 0%, rgba(96, 165, 250, 0.08) 100%);
+            border: 1px solid rgba(96, 165, 250, 0.25);
+        }
+
+        .quick-stat.female {
+            background: linear-gradient(135deg, rgba(244, 114, 182, 0.2) 0%, rgba(244, 114, 182, 0.08) 100%);
+            border: 1px solid rgba(244, 114, 182, 0.25);
+        }
+
+        .quick-stat.room {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.2) 0%, rgba(251, 191, 36, 0.08) 100%);
+            border: 1px solid rgba(251, 191, 36, 0.25);
+        }
+
+        .quick-stat.iso {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.05) 100%);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+        }
+
+        .quick-stat-label {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .quick-stat-value {
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        /* ISO View */
+        .iso-card {
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 14px;
+        }
+
+        .iso-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .iso-type-select {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 10px 14px;
+            color: var(--text-primary);
+            font-size: 13px;
+            font-weight: 600;
+            outline: none;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23888'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 16px;
+            padding-right: 36px;
+        }
+
+        .iso-type-select option {
+            background: #1a1a1a;
+            color: white;
+        }
+
+        /* Bottom Actions */
+        .bottom-actions {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 16px 20px;
+            padding-bottom: calc(16px + var(--safe-area-inset-bottom));
+            display: flex;
+            gap: 12px;
+            z-index: 100;
+        }
+
+        .bottom-actions::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(10, 10, 10, 0.98) 0%, rgba(10, 10, 10, 0.8) 70%, transparent 100%);
+            pointer-events: none;
+        }
+
+        .action-btn {
+            position: relative;
+            flex: 1;
+            padding: 16px;
+            border-radius: 16px;
+            border: none;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .action-btn:active {
+            transform: scale(0.96);
+        }
+
+        .action-btn.primary {
+            background: var(--helios-green);
+            color: #000;
+            box-shadow: 0 4px 20px var(--helios-green-glow);
+        }
+
+        .action-btn.secondary {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+        }
+
+        .action-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Add Station Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            z-index: 200;
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            width: 100%;
+            max-width: 500px;
+            padding: 24px;
+            padding-bottom: calc(24px + var(--safe-area-inset-bottom));
+            border-radius: 28px 28px 0 0;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .modal-handle {
+            width: 36px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            margin: 0 auto 20px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 16px 20px;
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 500;
+            outline: none;
+            margin-bottom: 16px;
+        }
+
+        .modal-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .modal-input:focus {
+            border-color: var(--helios-green);
+            box-shadow: 0 0 0 3px var(--helios-green-glow);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 16px;
+            border-radius: 14px;
+            border: none;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .modal-btn.cancel {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .modal-btn.confirm {
+            background: var(--helios-green);
+            color: #000;
+        }
+
+        .modal-btn:active {
+            transform: scale(0.96);
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: calc(20px + var(--safe-area-inset-top));
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            padding: 14px 24px;
+            border-radius: 14px;
+            background: rgba(126, 211, 33, 0.95);
+            color: #000;
+            font-size: 13px;
+            font-weight: 700;
+            z-index: 300;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 30px rgba(126, 211, 33, 0.4);
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-state-text {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* Delete Button */
+        .delete-btn {
+            width: 100%;
+            margin-top: 16px;
+            padding: 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .delete-btn:active {
+            transform: scale(0.98);
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        /* Check Button */
+        .check-btn {
+            padding: 12px 20px;
+            border-radius: 12px;
+            border: none;
+            background: var(--helios-green);
+            color: #000;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 16px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .check-btn:active {
+            transform: scale(0.96);
+        }
+
+        /* Last Check Time in Header */
+        .last-check-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(126, 211, 33, 0.15);
+            border: 1px solid rgba(126, 211, 33, 0.3);
+            padding: 6px 12px;
+            border-radius: 10px;
+        }
+
+        .last-check-badge-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--helios-green);
+        }
+
+        .last-check-badge-text {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--helios-green);
+        }
+
+        /* Print Styles */
         @media print {
             .no-print { display: none !important; }
-            body { background: white !important; padding: 0 !important; }
-            .liquid-glass { border: 1px solid #333 !important; box-shadow: none !important; backdrop-filter: none !important; background: white !important; border-radius: 0 !important; }
-            .container { max-width: 100% !important; width: 100% !important; margin: 0 !important; }
-            table { width: 100% !important; border-collapse: collapse; }
-            th { border-bottom: 3px solid #000 !important; color: black !important; padding: 10px !important; font-weight: bold !important; }
-            td { border-bottom: 1px solid #000 !important; padding: 10px !important; color: black !important; }
-            input, select { border: none !important; appearance: none; background: transparent !important; font-weight: bold !important; width: auto !important; color: black !important; }
-            .drag-handle, .stepper-btn { display: none !important; }
+            body { background: white !important; color: black !important; }
+            .app-container { height: auto; overflow: visible; }
+            .liquid-glass, .liquid-glass-heavy { background: white !important; border: 1px solid #ccc !important; backdrop-filter: none !important; }
+            .stat-value, .stepper-value, .station-name, .quick-card-title { color: black !important; }
+            .content-area { overflow: visible; }
+        }
+
+        /* Notes Feature */
+        .notes-section {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .notes-textarea {
+            width: 100%;
+            min-height: 80px;
+            padding: 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .notes-textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        .notes-textarea:focus {
+            border-color: var(--helios-green);
+        }
+
+        /* Shift History */
+        .history-panel {
+            position: fixed;
+            inset: 0;
+            z-index: 250;
+            display: none;
+        }
+
+        .history-panel.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .history-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .history-content {
+            position: relative;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            margin-top: var(--safe-area-inset-top);
+        }
+
+        .history-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .history-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .history-close {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .history-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .history-item {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .history-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .history-item-date {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .history-item-status {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 8px;
+            background: rgba(126, 211, 33, 0.2);
+            color: var(--helios-green);
+        }
+
+        .history-item-stats {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .history-stat {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .history-stat strong {
+            color: var(--text-primary);
+        }
+
+        .history-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        /* Share Button Enhancement */
+        .share-options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
+        .share-btn {
+            flex: 1;
+            min-width: 100px;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .share-btn:active {
+            transform: scale(0.96);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .share-btn.whatsapp {
+            background: rgba(37, 211, 102, 0.15);
+            border-color: rgba(37, 211, 102, 0.3);
+            color: #25d366;
+        }
+
+        .share-btn.email {
+            background: rgba(96, 165, 250, 0.15);
+            border-color: rgba(96, 165, 250, 0.3);
+            color: #60a5fa;
+        }
+
+        /* Drag Handle */
+        .drag-handle {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: grab;
+            color: var(--text-muted);
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .drag-handle:active {
+            cursor: grabbing;
+            background: var(--helios-green);
+            color: #000;
+        }
+
+        body.light-mode .drag-handle {
+            background: rgba(0, 0, 0, 0.04);
+            border-color: rgba(0, 0, 0, 0.08);
+        }
+
+        .station-card.dragging {
+            opacity: 0.5;
+            transform: scale(0.98);
+        }
+
+        .station-card.drag-over {
+            border: 2px dashed var(--helios-green) !important;
+        }
+
+        /* Inline Controls Row */
+        .station-controls-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 16px 16px;
+        }
+
+        .inline-stepper {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        body.light-mode .inline-stepper {
+            background: rgba(0, 0, 0, 0.03);
+            border-color: rgba(0, 0, 0, 0.06);
+        }
+
+        .inline-stepper-label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 0 6px;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .inline-stepper-label.blue { color: #60a5fa; }
+        .inline-stepper-label.pink { color: #f472b6; }
+        .inline-stepper-label.amber { color: #fbbf24; }
+
+        .inline-stepper-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .inline-stepper-btn:active {
+            transform: scale(0.9);
+            background: var(--helios-green);
+            color: #000;
+        }
+
+        body.light-mode .inline-stepper-btn {
+            background: rgba(0, 0, 0, 0.06);
+        }
+
+        .inline-stepper-value {
+            width: 36px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text-primary);
+            background: transparent;
+            border: none;
+            outline: none;
+        }
+
+        /* Edit Station Name */
+        .edit-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .edit-btn:active {
+            transform: scale(0.9);
+            background: var(--helios-green);
+            color: #000;
+        }
+
+        body.light-mode .edit-btn {
+            background: rgba(0, 0, 0, 0.04);
+        }
+
+        .station-name-input {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid var(--helios-green);
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 700;
+            padding: 4px 0;
+            outline: none;
+            width: 150px;
+        }
+
+        /* Phone Number */
+        .phone-badge {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px 8px;
+            border-radius: 8px;
+        }
+
+        .phone-badge a {
+            color: var(--helios-green);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        body.light-mode .phone-badge {
+            background: rgba(0, 0, 0, 0.04);
+        }
+
+        .phone-input {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .phone-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .phone-input:focus {
+            border-color: var(--helios-green);
+        }
+
+        body.light-mode .phone-input {
+            background: rgba(0, 0, 0, 0.03);
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        /* Compact Station Header */
+        .station-header-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 16px;
+        }
+
+        .station-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .station-name-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .station-meta-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .station-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .expand-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            border: none;
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .expand-btn:active {
+            transform: scale(0.9);
+        }
+
+        body.light-mode .expand-btn {
+            background: rgba(0, 0, 0, 0.04);
+        }
+
+        .station-card.expanded .expand-btn svg {
+            transform: rotate(180deg);
         }
     </style>
 </head>
-<body class="p-3 md:p-8 lg:p-10">
+<body>
+    <div class="bg-mesh"></div>
+    <div class="noise-overlay"></div>
 
-<div class="max-w-7xl mx-auto container">
-    
-    <!-- MASTER DASHBOARD -->
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-10 no-print">
-        
-        <!-- ZNA BELASTUNGS-INDEX -->
-        <div id="zna-status-panel" class="lg:col-span-1 liquid-glass rounded-[2.5rem] p-7 border-l-[12px] border-[#82bc00] flex flex-col justify-between shadow-xl transition-all duration-500">
-            <div>
-                <h3 class="text-[11px] font-black text-slate-600 uppercase tracking-[0.2em] mb-3">ZNA Status</h3>
-                <div class="flex items-center gap-4">
-                    <div id="zna-indicator" class="w-5 h-5 rounded-full bg-[#82bc00] status-pulse"></div>
-                    <span id="zna-status-label" class="text-2xl font-black text-slate-900 tracking-tight">Normalbetrieb</span>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header no-print">
+            <div class="logo-group">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+                </div>
+                <div class="logo-text">
+                    <h1>Betten-Radar</h1>
+                    <span>Helios Duisburg</span>
                 </div>
             </div>
-            <div class="flex gap-2 mt-6">
-                <button onclick="setZNAStatus('normal', '#82bc00', 'Normalbetrieb')" class="w-10 h-10 rounded-2xl bg-green-100 border border-green-300 flex items-center justify-center hover:scale-110 active:scale-95 transition-all shadow-sm">🟢</button>
-                <button onclick="setZNAStatus('high', '#fbbf24', 'Erhöht')" class="w-10 h-10 rounded-2xl bg-yellow-100 border border-yellow-300 flex items-center justify-center hover:scale-110 active:scale-95 transition-all shadow-sm">🟡</button>
-                <button onclick="setZNAStatus('crit', '#ef4444', 'Kritisch')" class="w-10 h-10 rounded-2xl bg-red-100 border border-red-300 flex items-center justify-center hover:scale-110 active:scale-95 transition-all shadow-sm">🔴</button>
-                <button onclick="setZNAStatus('stop', '#7c3aed', 'Abmeldung')" class="w-10 h-10 rounded-2xl bg-purple-100 border border-purple-300 flex items-center justify-center hover:scale-110 active:scale-95 transition-all shadow-sm">🟣</button>
+            <div class="header-actions">
+                <button class="theme-toggle" onclick="toggleTheme()" title="Design wechseln">
+                    <svg class="sun-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    <svg class="moon-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+                </button>
+                <button class="icon-btn" onclick="openHistoryPanel()" title="Schicht-Historie">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                </button>
+                <button class="icon-btn" onclick="openShareModal()" title="Status teilen">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
+                </button>
+                <button class="icon-btn" onclick="openAddModal()" title="Station hinzufügen">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- ZNA Status Bar -->
+        <div id="zna-status-bar" class="zna-status-bar liquid-glass status-normal no-print">
+            <div class="zna-info">
+                <div id="zna-dot" class="status-dot green"></div>
+                <div>
+                    <div class="zna-label">ZNA Status</div>
+                    <div id="zna-label" class="zna-value">Normalbetrieb</div>
+                </div>
+            </div>
+            <div class="zna-buttons">
+                <button class="zna-btn" onclick="setZNAStatus('normal', 'green', 'Normalbetrieb')">🟢</button>
+                <button class="zna-btn" onclick="setZNAStatus('high', 'yellow', 'Erhöht')">🟡</button>
+                <button class="zna-btn" onclick="setZNAStatus('crit', 'red', 'Kritisch')">🔴</button>
+                <button class="zna-btn" onclick="setZNAStatus('stop', 'purple', 'Abmeldung')">🟣</button>
             </div>
         </div>
 
-        <!-- TOTALS & LAST CHECKED TIMESTAMP -->
-        <div class="lg:col-span-3 liquid-glass rounded-[2.5rem] p-7 grid grid-cols-2 md:grid-cols-6 gap-6 shadow-xl">
-            <div class="text-center md:border-r border-slate-300">
-                <p class="text-[10px] font-black text-slate-600 uppercase mb-2 tracking-widest">Entl.</p>
-                <p id="sum-entl" class="text-3xl font-black text-[#6a9a00]">0</p>
+        <!-- Stats Grid -->
+        <div class="stats-grid no-print">
+            <div class="stat-card liquid-glass">
+                <div class="stat-label">Bett (M)</div>
+                <div id="sum-m" class="stat-value blue">0</div>
             </div>
-            <div class="text-center md:border-r border-slate-300">
-                <p class="text-[10px] font-black text-slate-600 uppercase mb-2 tracking-widest">Bett (M)</p>
-                <p id="sum-m" class="text-3xl font-black text-[#004a99]">0</p>
+            <div class="stat-card liquid-glass">
+                <div class="stat-label">Bett (W)</div>
+                <div id="sum-w" class="stat-value pink">0</div>
             </div>
-            <div class="text-center md:border-r border-slate-300">
-                <p class="text-[10px] font-black text-slate-600 uppercase mb-2 tracking-widest">Bett (W)</p>
-                <p id="sum-w" class="text-3xl font-black text-pink-700">0</p>
+            <div class="stat-card liquid-glass">
+                <div class="stat-label">Zimmer</div>
+                <div id="sum-rooms" class="stat-value amber">0</div>
             </div>
-            <div class="text-center md:border-r border-slate-300">
-                <p class="text-[10px] font-black text-slate-600 uppercase mb-2 tracking-widest">Zimmer</p>
-                <p id="sum-rooms" class="text-3xl font-black text-slate-800">0</p>
+            <div class="stat-card liquid-glass">
+                <div class="stat-label">ISO</div>
+                <div id="sum-iso" class="stat-value amber">0</div>
             </div>
-            <div class="text-center md:border-r border-slate-300">
-                <p class="text-[10px] font-black text-slate-600 uppercase mb-2 tracking-widest">Iso</p>
-                <p id="sum-iso" class="text-3xl font-black text-amber-700">0</p>
+            <div class="stat-card liquid-glass">
+                <div class="stat-label">Entl.</div>
+                <div id="sum-entl" class="stat-value green">0</div>
             </div>
-            <div class="text-center bg-white border border-slate-200 rounded-3xl flex flex-col justify-center p-2 shadow-inner">
-                <p class="text-[9px] font-black text-[#82bc00] uppercase mb-1 tracking-widest">Last Checkt</p>
-                <p id="master-check-time" class="text-xl font-black text-slate-900 tracking-tighter">--:--</p>
+            <div class="stat-card liquid-glass">
+                <div class="stat-label">Letzter Check</div>
+                <div id="master-check-time" class="stat-value white" style="font-size: 20px;">--:--</div>
             </div>
         </div>
-    </div>
 
-    <!-- MAIN INTERFACE HEADER -->
-    <header class="flex flex-col md:flex-row justify-between items-end mb-8 gap-6">
-        <div class="flex items-center gap-5">
-            <div class="w-16 h-16 bg-white rounded-[1.8rem] flex items-center justify-center shadow-xl border border-slate-200 transform -rotate-3 hover:rotate-0 transition-all duration-300">
-                 <svg viewBox="0 0 24 24" class="w-10 h-10 text-[#82bc00]" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
-            </div>
-            <div>
-                <h1 class="text-4xl font-black text-slate-900 tracking-tighter leading-none mb-1 text-nowrap">Betten-Radar</h1>
-                <p class="text-[13px] font-black text-[#6a9a00] uppercase tracking-[0.4em]">Helios Duisburg</p>
-            </div>
-        </div>
-        
-        <div class="flex bg-slate-200 p-1.5 rounded-[1.8rem] shadow-inner border border-slate-300 no-print">
-            <button id="tab-betten" onclick="switchTab('betten')" class="px-8 py-3 rounded-[1.4rem] text-[11px] font-black uppercase tracking-widest transition-all tab-active text-nowrap">🏥 Betten & Zimmer</button>
-            <button id="tab-iso" onclick="switchTab('iso')" class="px-8 py-3 rounded-[1.4rem] text-[11px] font-black uppercase tracking-widest transition-all text-slate-700 hover:text-slate-900 text-nowrap">☣️ Isolation</button>
-        </div>
-    </header>
+        <!-- Tab Navigation -->
+        <nav class="tab-nav liquid-glass no-print">
+            <button id="tab-betten" class="tab-btn active" onclick="switchTab('betten')">
+                🏥 Betten
+            </button>
+            <button id="tab-quick" class="tab-btn" onclick="switchTab('quick')">
+                ⚡ Quick
+            </button>
+            <button id="tab-iso" class="tab-btn" onclick="switchTab('iso')">
+                ☣️ ISO
+            </button>
+        </nav>
 
-    <!-- CONTENT TABLE -->
-    <div class="liquid-glass rounded-[3rem] overflow-hidden shadow-2xl border border-slate-300 bg-white/90">
-        <div class="overflow-x-auto no-scrollbar">
-            <table class="w-full text-left">
-                <thead id="table-head" class="bg-slate-100 border-b-2 border-[#82bc00]">
-                    <!-- Dynamic Header -->
-                </thead>
-                <tbody id="tableBody" class="divide-y divide-slate-200">
-                    <!-- Data Rows -->
-                </tbody>
-            </table>
-        </div>
-    </div>
+        <!-- Content Area -->
+        <main id="content-area" class="content-area">
+            <!-- Rendered by JS -->
+        </main>
 
-    <!-- FOOTER CONTROLS -->
-    <footer class="mt-10 flex flex-col md:flex-row gap-6 justify-between items-center no-print">
-        <div class="flex gap-3 w-full md:w-auto">
-            <input type="text" id="add-station-input" placeholder="Station hinzufügen" class="flex-1 md:w-72 bg-white px-6 py-4 rounded-[1.8rem] border border-slate-300 focus:ring-4 focus:ring-[#82bc00]/30 outline-none font-bold text-sm shadow-inner transition-all">
-            <button onclick="addStation()" class="bg-[#82bc00] text-white px-8 py-4 rounded-[1.8rem] font-black text-[11px] uppercase tracking-widest hover:bg-[#6a9a00] transition-all shadow-xl active:scale-95 border-b-4 border-[#6a9a00]">Add+</button>
-        </div>
-        
-        <div class="flex gap-4 items-center">
-            <button onclick="resetValues()" class="bg-red-50 text-red-600 border-2 border-red-200 px-6 py-4 rounded-[1.8rem] font-black text-[11px] uppercase tracking-widest hover:bg-red-100 transition-all flex items-center gap-3 shadow-sm active:scale-95">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+        <!-- Bottom Actions -->
+        <div class="bottom-actions no-print">
+            <button class="action-btn secondary" onclick="resetValues()">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
                 Reset
             </button>
-
-             <button onclick="window.print()" class="bg-slate-900 text-white px-8 py-4 rounded-[1.8rem] font-black text-[11px] uppercase tracking-widest hover:bg-black transition-all flex items-center gap-3 shadow-2xl transform hover:-translate-y-1">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
-                Drucken
+            <button class="action-btn primary" onclick="openAddModal()">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                Station +
             </button>
-            <div class="bg-slate-100 px-6 py-4 rounded-[1.8rem] border border-slate-300 flex items-center gap-3 shadow-inner">
-                <div class="w-2.5 h-2.5 rounded-full bg-green-600 shadow-[0_0_12px_rgba(22,163,74,0.6)]"></div>
-                <span class="text-[10px] font-black text-slate-700 uppercase tracking-widest">Lokal Aktiv</span>
-            </div>
-        </div>
-    </footer>
-</div>
-
-<!-- Modal für Confirmation -->
-<div id="custom-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-[100] p-4 no-print">
-    <div class="liquid-glass rounded-[2rem] p-8 max-w-sm w-full shadow-2xl text-center border-2 border-slate-200">
-        <h4 id="modal-title" class="text-xl font-black mb-3 text-slate-900 uppercase tracking-tight">Bestätigung</h4>
-        <p id="modal-text" class="text-slate-700 mb-8 font-bold leading-relaxed"></p>
-        <div class="flex gap-3">
-            <button id="modal-cancel" class="flex-1 bg-slate-100 text-slate-700 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-slate-200 transition-all">Abbruch</button>
-            <button id="modal-confirm" class="flex-1 bg-[#82bc00] text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg hover:bg-[#6a9a00] transition-all">Ja, sicher</button>
         </div>
     </div>
-</div>
 
-<script>
-    let appState = {
-        currentTab: 'betten',
-        znaStatus: { type: 'normal', color: '#82bc00', label: 'Normalbetrieb' },
-        stations: [
-            { id: '1a', name: 'Station 1A', entl: 0, m: 0, w: 0, rooms: 0, isoType: 'Keine', isoCount: 0, lastCheck: '--:--', rawTimestamp: 0 },
-            { id: 'zna_holding', name: 'ZNA Holding', entl: 0, m: 0, w: 0, rooms: 0, isoType: 'Keine', isoCount: 0, lastCheck: '--:--', rawTimestamp: 0 }
-        ]
-    };
-
-    let draggedId = null;
-
-    function loadData() {
-        const saved = localStorage.getItem('helios_radar_data');
-        if (saved) {
-            appState = JSON.parse(saved);
-            appState.stations.forEach(s => {
-                if (s.rooms === undefined) s.rooms = 0;
-            });
-        }
-        updateDashboard();
-        updateStatusUI();
-        render();
-    }
-
-    function saveData() {
-        localStorage.setItem('helios_radar_data', JSON.stringify(appState));
-        updateDashboard();
-    }
-
-    window.switchTab = function(tab) {
-        appState.currentTab = tab;
-        document.getElementById('tab-betten').className = `px-8 py-3 rounded-[1.4rem] text-[11px] font-black uppercase tracking-widest transition-all ${tab === 'betten' ? 'tab-active' : 'text-slate-700'}`;
-        document.getElementById('tab-iso').className = `px-8 py-3 rounded-[1.4rem] text-[11px] font-black uppercase tracking-widest transition-all ${tab === 'iso' ? 'tab-active' : 'text-slate-700'}`;
-        render();
-        saveData();
-    };
-
-    function updateDashboard() {
-        let entl = 0, m = 0, w = 0, rooms = 0, iso = 0;
-        let latestTime = "--:--";
-        let latestRaw = 0;
-
-        appState.stations.forEach(s => {
-            entl += (Number(s.entl) || 0);
-            m += (Number(s.m) || 0);
-            w += (Number(s.w) || 0);
-            rooms += (Number(s.rooms) || 0);
-            iso += (Number(s.isoCount) || 0);
-            if (s.rawTimestamp && s.rawTimestamp > latestRaw) {
-                latestRaw = s.rawTimestamp;
-                latestTime = s.lastCheck;
-            }
-        });
-
-        document.getElementById('sum-entl').innerText = entl;
-        document.getElementById('sum-m').innerText = m;
-        document.getElementById('sum-w').innerText = w;
-        document.getElementById('sum-rooms').innerText = rooms;
-        document.getElementById('sum-iso').innerText = iso;
-        document.getElementById('master-check-time').innerText = latestTime;
-    }
-
-    function updateStatusUI() {
-        const status = appState.znaStatus;
-        const panel = document.getElementById('zna-status-panel');
-        const indicator = document.getElementById('zna-indicator');
-        const label = document.getElementById('zna-status-label');
-        
-        panel.style.borderLeftColor = status.color;
-        indicator.style.backgroundColor = status.color;
-        label.innerText = status.label;
-        label.style.color = (status.color === '#fbbf24') ? '#92400e' : status.color;
-    }
-
-    window.setZNAStatus = function(type, color, label) {
-        appState.znaStatus = { type, color, label };
-        updateStatusUI();
-        saveData();
-    };
-
-    window.updateVal = function(id, field, val) {
-        const station = appState.stations.find(s => s.id === id);
-        if (station) {
-            station[field] = (field === 'isoType' || field === 'lastCheck') ? val : (parseInt(val) || 0);
-            saveData();
-            render();
-        }
-    };
-
-    window.stepVal = function(id, field, step) {
-        const station = appState.stations.find(s => s.id === id);
-        if (station) {
-            station[field] = Math.max(0, (Number(station[field]) || 0) + step);
-            saveData();
-            render();
-        }
-    };
-
-    window.markChecked = function(id) {
-        const now = new Date();
-        const time = now.toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'});
-        const station = appState.stations.find(s => s.id === id);
-        if (station) {
-            station.lastCheck = time;
-            station.rawTimestamp = now.getTime();
-            render();
-            saveData();
-        }
-    };
-
-    window.handleDragStart = function(e, id) {
-        draggedId = id;
-        e.dataTransfer.effectAllowed = 'move';
-        e.currentTarget.classList.add('dragging');
-    };
-
-    window.handleDragEnd = function(e) {
-        e.currentTarget.classList.remove('dragging');
-        draggedId = null;
-    };
-
-    window.handleDragOver = function(e) {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-    };
-
-    window.handleDrop = function(e, targetId) {
-        e.preventDefault();
-        if (draggedId === targetId) return;
-
-        const draggedIdx = appState.stations.findIndex(s => s.id === draggedId);
-        const targetIdx = appState.stations.findIndex(s => s.id === targetId);
-        
-        const [movedItem] = appState.stations.splice(draggedIdx, 1);
-        appState.stations.splice(targetIdx, 0, movedItem);
-        
-        saveData();
-        render();
-    };
-
-    function showConfirm(text, onConfirm) {
-        const modal = document.getElementById('custom-modal');
-        const modalText = document.getElementById('modal-text');
-        const btnCancel = document.getElementById('modal-cancel');
-        const btnConfirm = document.getElementById('modal-confirm');
-
-        modalText.innerText = text;
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-
-        const cleanup = () => {
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-            btnCancel.removeEventListener('click', cleanup);
-            btnConfirm.removeEventListener('click', confirmed);
-        };
-
-        const confirmed = () => {
-            onConfirm();
-            cleanup();
-        };
-
-        btnCancel.addEventListener('click', cleanup);
-        btnConfirm.addEventListener('click', confirmed);
-    }
-
-    window.resetValues = function() {
-        showConfirm('Alle Daten zurücksetzen? (Stationen bleiben erhalten)', () => {
-            appState.stations.forEach(s => {
-                s.entl = 0; s.m = 0; s.w = 0; s.rooms = 0; s.isoCount = 0; s.isoType = 'Keine';
-                s.lastCheck = '--:--'; s.rawTimestamp = 0;
-            });
-            appState.znaStatus = { type: 'normal', color: '#82bc00', label: 'Normalbetrieb' };
-            saveData();
-            updateStatusUI();
-            render();
-        });
-    };
-
-    window.addStation = function() {
-        const input = document.getElementById('add-station-input');
-        const name = input.value.trim();
-        if (!name) return;
-        const id = 'st_' + Date.now();
-        appState.stations.push({
-            id, name, entl: 0, m: 0, w: 0, rooms: 0, isoType: 'Keine', isoCount: 0, lastCheck: '--:--', rawTimestamp: 0
-        });
-        input.value = '';
-        render();
-        saveData();
-    };
-
-    window.deleteStation = function(id) {
-        const station = appState.stations.find(s => s.id === id);
-        showConfirm(`Station "${station?.name}" entfernen?`, () => {
-            appState.stations = appState.stations.filter(s => s.id !== id);
-            render();
-            saveData();
-        });
-    };
-
-    function createStepper(id, field, val, bgClass = 'bg-white', textClass = 'text-slate-900') {
-        return `
-            <div class="flex items-center justify-center gap-1">
-                <button onclick="stepVal('${id}', '${field}', -1)" class="stepper-btn bg-slate-200 text-slate-700 hover:bg-slate-300">-</button>
-                <input type="number" value="${val}" onchange="updateVal('${id}', '${field}', this.value)" 
-                    class="w-12 p-2 rounded-xl ${bgClass} text-center font-black outline-none border-2 border-slate-200 focus:border-[#82bc00] shadow-sm ${textClass}">
-                <button onclick="stepVal('${id}', '${field}', 1)" class="stepper-btn bg-slate-200 text-slate-700 hover:bg-slate-300">+</button>
+    <!-- Add Station Modal -->
+    <div id="add-modal" class="modal-overlay" onclick="closeAddModal(event)">
+        <div class="modal-content liquid-glass-heavy" onclick="event.stopPropagation()">
+            <div class="modal-handle"></div>
+            <h3 class="modal-title">Station hinzufügen</h3>
+            <input type="text" id="add-station-input" class="modal-input" placeholder="Name der Station">
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="closeAddModal()">Abbrechen</button>
+                <button class="modal-btn confirm" onclick="addStation()">Hinzufügen</button>
             </div>
-        `;
-    }
+        </div>
+    </div>
 
-    function render() {
-        const head = document.getElementById('table-head');
-        const body = document.getElementById('tableBody');
-        body.innerHTML = '';
+    <!-- Confirm Modal -->
+    <div id="confirm-modal" class="modal-overlay">
+        <div class="modal-content liquid-glass-heavy" onclick="event.stopPropagation()">
+            <div class="modal-handle"></div>
+            <h3 id="confirm-title" class="modal-title">Bestätigung</h3>
+            <p id="confirm-text" style="text-align: center; color: var(--text-secondary); margin-bottom: 20px; font-size: 14px;"></p>
+            <div class="modal-actions">
+                <button id="confirm-cancel" class="modal-btn cancel">Abbrechen</button>
+                <button id="confirm-ok" class="modal-btn confirm">Bestätigen</button>
+            </div>
+        </div>
+    </div>
 
-        if (appState.currentTab === 'betten') {
-            head.innerHTML = `<tr>
-                <th class="p-6 text-[11px] font-black uppercase text-slate-800 tracking-[0.2em] w-12"></th>
-                <th class="p-6 text-[11px] font-black uppercase text-slate-800 tracking-[0.2em]">Station</th>
-                <th class="p-6 text-center text-[11px] font-black uppercase text-slate-800 tracking-[0.2em]">Entl.</th>
-                <th class="p-6 text-center text-[11px] font-black uppercase text-slate-800 tracking-[0.2em]">Bett (M)</th>
-                <th class="p-6 text-center text-[11px] font-black uppercase text-slate-800 tracking-[0.2em]">Bett (W)</th>
-                <th class="p-6 text-center text-[11px] font-black uppercase text-slate-800 tracking-[0.2em]">Freie Zimmer</th>
-                <th class="p-6 text-center text-[11px] font-black uppercase text-slate-800 tracking-[0.2em]">Check</th>
-                <th class="p-6 text-right no-print">Optionen</th>
-            </tr>`;
-        } else {
-            head.innerHTML = `<tr>
-                <th class="p-6 text-[11px] font-black uppercase text-slate-800 tracking-[0.2em] w-12"></th>
-                <th class="p-6 text-[11px] font-black uppercase text-slate-800 tracking-[0.2em]">Station</th>
-                <th class="p-6 text-center text-[11px] font-black uppercase text-slate-800 tracking-[0.2em]">Isolation</th>
-                <th class="p-6 text-center text-[11px] font-black uppercase text-slate-800 tracking-[0.2em]">Plätze frei</th>
-                <th class="p-6 text-center text-[11px] font-black uppercase text-slate-800 tracking-[0.2em]">Zeit</th>
-                <th class="p-6 text-right no-print">Optionen</th>
-            </tr>`;
+    <!-- History Panel -->
+    <div id="history-panel" class="history-panel">
+        <div class="history-backdrop" onclick="closeHistoryPanel()"></div>
+        <div class="history-content liquid-glass-heavy">
+            <div class="history-header">
+                <h3 class="history-title">📋 Schicht-Historie</h3>
+                <button class="history-close" onclick="closeHistoryPanel()">×</button>
+            </div>
+            <div id="history-list" class="history-list">
+                <!-- Filled by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Share Modal -->
+    <div id="share-modal" class="modal-overlay" onclick="closeShareModal(event)">
+        <div class="modal-content liquid-glass-heavy" onclick="event.stopPropagation()">
+            <div class="modal-handle"></div>
+            <h3 class="modal-title">Status teilen</h3>
+            <div class="share-options">
+                <button class="share-btn whatsapp" onclick="shareViaWhatsApp()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    WhatsApp
+                </button>
+                <button class="share-btn email" onclick="shareViaEmail()">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                    E-Mail
+                </button>
+            </div>
+            <button class="share-btn" style="width: 100%; margin-top: 12px;" onclick="copyStatusToClipboard(); closeShareModal();">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" /></svg>
+                In Zwischenablage kopieren
+            </button>
+            <button class="modal-btn cancel" style="width: 100%; margin-top: 12px;" onclick="closeShareModal()">Schließen</button>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast">Status kopiert!</div>
+
+    <script>
+        let appState = {
+            currentTab: 'betten',
+            expandedStations: {},
+            znaStatus: { type: 'normal', color: 'green', label: 'Normalbetrieb' },
+            stations: [
+                { id: '1a', name: 'Station 1A', entl: 0, m: 0, w: 0, rooms: 0, isoType: 'Keine', isoCount: 0, lastCheck: '--:--', rawTimestamp: 0, notes: '', phone: '' },
+                { id: 'zna_holding', name: 'ZNA Holding', entl: 0, m: 0, w: 0, rooms: 0, isoType: 'Keine', isoCount: 0, lastCheck: '--:--', rawTimestamp: 0, notes: '', phone: '' }
+            ],
+            shiftHistory: [],
+            theme: 'dark'
+        };
+
+        // Load & Save
+        function loadData() {
+            const saved = localStorage.getItem('helios_radar_data_mobile');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                appState = { ...appState, ...parsed };
+                // Ensure new fields exist on old data
+                appState.stations.forEach(s => {
+                    if (!s.phone) s.phone = '';
+                    if (!s.notes) s.notes = '';
+                });
+            }
+            applyTheme();
+            updateDashboard();
+            updateZNAUI();
+            render();
         }
 
-        appState.stations.forEach(s => {
-            const tr = document.createElement('tr');
-            tr.className = "group hover:bg-slate-100/80 transition-all duration-300";
-            tr.setAttribute('draggable', 'true');
-            tr.setAttribute('ondragstart', `handleDragStart(event, '${s.id}')`);
-            tr.setAttribute('ondragend', `handleDragEnd(event)`);
-            tr.setAttribute('ondragover', `handleDragOver(event)`);
-            tr.setAttribute('ondrop', `handleDrop(event, '${s.id}')`);
-            
-            const dragHandle = `<td class="p-6 text-center no-print">
-                <div class="drag-handle">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 8h16M4 16h16" /></svg>
-                </div>
-            </td>`;
+        function saveData() {
+            localStorage.setItem('helios_radar_data_mobile', JSON.stringify(appState));
+            updateDashboard();
+        }
 
-            if (appState.currentTab === 'betten') {
-                tr.innerHTML = `
-                    ${dragHandle}
-                    <td class="p-6 font-black text-slate-900">${s.name}</td>
-                    <td class="p-6 text-center">
-                        ${createStepper(s.id, 'entl', s.entl)}
-                    </td>
-                    <td class="p-6 text-center">
-                        ${createStepper(s.id, 'm', s.m, 'bg-blue-50', 'text-blue-900')}
-                    </td>
-                    <td class="p-6 text-center">
-                        ${createStepper(s.id, 'w', s.w, 'bg-pink-50', 'text-pink-900')}
-                    </td>
-                    <td class="p-6 text-center">
-                        ${createStepper(s.id, 'rooms', s.rooms, 'bg-slate-50', 'text-slate-900')}
-                    </td>
-                    <td class="p-6 text-center">
-                        <span class="text-[11px] font-black text-slate-700 bg-white px-4 py-2 rounded-xl border-2 border-slate-100 shadow-inner">${s.lastCheck}</span>
-                    </td>
-                    <td class="p-6 text-right no-print">
-                        <div class="flex justify-end gap-2">
-                            <button onclick="markChecked('${s.id}')" class="p-4 bg-white rounded-2xl shadow-lg text-[#82bc00] hover:bg-[#82bc00] hover:text-white border border-slate-200 transform hover:rotate-12 transition-all">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
-                            </button>
-                            <button onclick="deleteStation('${s.id}')" class="opacity-0 group-hover:opacity-100 p-4 bg-white rounded-2xl shadow-lg text-red-500 hover:bg-red-500 hover:text-white border border-slate-200 transition-all">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+        // Dashboard
+        function updateDashboard() {
+            let entl = 0, m = 0, w = 0, rooms = 0, iso = 0;
+            let latestTime = "--:--";
+            let latestRaw = 0;
+            
+            appState.stations.forEach(s => {
+                entl += (Number(s.entl) || 0);
+                m += (Number(s.m) || 0);
+                w += (Number(s.w) || 0);
+                rooms += (Number(s.rooms) || 0);
+                iso += (Number(s.isoCount) || 0);
+                if (s.rawTimestamp && s.rawTimestamp > latestRaw) {
+                    latestRaw = s.rawTimestamp;
+                    latestTime = s.lastCheck;
+                }
+            });
+
+            document.getElementById('sum-entl').innerText = entl;
+            document.getElementById('sum-m').innerText = m;
+            document.getElementById('sum-w').innerText = w;
+            document.getElementById('sum-rooms').innerText = rooms;
+            document.getElementById('sum-iso').innerText = iso;
+            document.getElementById('master-check-time').innerText = latestTime;
+        }
+
+        // ZNA Status
+        function updateZNAUI() {
+            const bar = document.getElementById('zna-status-bar');
+            const dot = document.getElementById('zna-dot');
+            const label = document.getElementById('zna-label');
+            const status = appState.znaStatus;
+
+            bar.className = `zna-status-bar liquid-glass status-${status.type} no-print`;
+            dot.className = `status-dot ${status.color}`;
+            label.innerText = status.label;
+        }
+
+        window.setZNAStatus = function(type, color, label) {
+            appState.znaStatus = { type, color, label };
+            updateZNAUI();
+            saveData();
+        };
+
+        // Tabs
+        window.switchTab = function(tab) {
+            appState.currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.id === 'tab-' + tab);
+            });
+            render();
+            saveData();
+        };
+
+        // Station Functions
+        window.toggleStation = function(id) {
+            appState.expandedStations[id] = !appState.expandedStations[id];
+            render();
+        };
+
+        window.updateVal = function(id, field, val) {
+            const station = appState.stations.find(s => s.id === id);
+            if (station) {
+                station[field] = (field === 'isoType') ? val : Math.max(0, parseInt(val) || 0);
+                const now = new Date();
+                station.lastCheck = now.toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'});
+                station.rawTimestamp = now.getTime();
+                saveData();
+                render();
+            }
+        };
+
+        window.stepVal = function(id, field, step) {
+            const station = appState.stations.find(s => s.id === id);
+            if (station) {
+                station[field] = Math.max(0, (Number(station[field]) || 0) + step);
+                const now = new Date();
+                station.lastCheck = now.toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'});
+                station.rawTimestamp = now.getTime();
+                saveData();
+                render();
+            }
+        };
+
+        window.markChecked = function(id) {
+            const now = new Date();
+            const station = appState.stations.find(s => s.id === id);
+            if (station) {
+                station.lastCheck = now.toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'});
+                station.rawTimestamp = now.getTime();
+                saveData();
+                render();
+                showToast('Zeit aktualisiert');
+            }
+        };
+
+        // Modals
+        window.openAddModal = function() {
+            document.getElementById('add-modal').classList.add('active');
+            document.getElementById('add-station-input').focus();
+        };
+
+        window.closeAddModal = function(e) {
+            if (!e || e.target === e.currentTarget) {
+                document.getElementById('add-modal').classList.remove('active');
+                document.getElementById('add-station-input').value = '';
+            }
+        };
+
+        window.addStation = function() {
+            const input = document.getElementById('add-station-input');
+            const name = input.value.trim();
+            if (!name) return;
+            
+            appState.stations.push({
+                id: 'st_' + Date.now(),
+                name,
+                entl: 0, m: 0, w: 0, rooms: 0,
+                isoType: 'Keine', isoCount: 0,
+                lastCheck: '--:--', rawTimestamp: 0,
+                notes: '',
+                phone: ''
+            });
+            
+            closeAddModal();
+            saveData();
+            render();
+            showToast('Station hinzugefügt');
+        };
+
+        function showConfirm(text, onConfirm) {
+            const modal = document.getElementById('confirm-modal');
+            document.getElementById('confirm-text').innerText = text;
+            modal.classList.add('active');
+            
+            const cleanup = () => modal.classList.remove('active');
+            document.getElementById('confirm-cancel').onclick = cleanup;
+            document.getElementById('confirm-ok').onclick = () => { onConfirm(); cleanup(); };
+        }
+
+        window.resetValues = function() {
+            showConfirm('Alle Werte auf Null setzen? (Schichtwechsel)', () => {
+                // Save current state to history before reset
+                saveShiftToHistory();
+                
+                appState.stations.forEach(s => {
+                    s.entl = 0; s.m = 0; s.w = 0; s.rooms = 0;
+                    s.isoCount = 0; s.isoType = 'Keine';
+                    s.lastCheck = '--:--'; s.rawTimestamp = 0;
+                    s.notes = '';
+                    // Keep phone numbers on reset
+                });
+                saveData();
+                render();
+                showToast('Schicht gespeichert & zurückgesetzt');
+            });
+        };
+
+        window.deleteStation = function(id) {
+            const station = appState.stations.find(s => s.id === id);
+            showConfirm(`"${station?.name}" löschen?`, () => {
+                appState.stations = appState.stations.filter(s => s.id !== id);
+                saveData();
+                render();
+                showToast('Station gelöscht');
+            });
+        };
+
+        // Clipboard
+        window.copyStatusToClipboard = function() {
+            const text = getStatusText();
+
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Status kopiert!');
+            });
+        };
+
+        // Toast
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        // Render
+        function render() {
+            const content = document.getElementById('content-area');
+            content.innerHTML = '';
+
+            if (appState.currentTab === 'quick') {
+                renderQuickView(content);
+            } else if (appState.currentTab === 'iso') {
+                renderIsoView(content);
+            } else {
+                renderBettenView(content);
+            }
+        }
+
+        function renderBettenView(container) {
+            appState.stations.forEach(s => {
+                const isCritical = Number(s.m) === 0 && Number(s.w) === 0 && Number(s.rooms) === 0;
+                const isExpanded = appState.expandedStations[s.id];
+                const isEditing = appState.editingStation === s.id;
+                
+                const card = document.createElement('div');
+                card.className = `station-card liquid-glass ${isCritical ? 'critical' : ''} ${isExpanded ? 'expanded' : ''}`;
+                card.setAttribute('draggable', 'true');
+                card.setAttribute('data-id', s.id);
+                
+                // Drag events
+                card.ondragstart = (e) => handleDragStart(e, s.id);
+                card.ondragend = handleDragEnd;
+                card.ondragover = handleDragOver;
+                card.ondrop = (e) => handleDrop(e, s.id);
+                card.ondragleave = handleDragLeave;
+                
+                card.innerHTML = `
+                    <div class="station-header-row">
+                        <div class="drag-handle" title="Zum Verschieben ziehen">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"/>
+                            </svg>
+                        </div>
+                        <div class="station-info">
+                            <div class="station-name-row">
+                                ${isEditing ? `
+                                    <input type="text" class="station-name-input" value="${s.name}" 
+                                        onblur="saveStationName('${s.id}', this.value)"
+                                        onkeypress="if(event.key==='Enter'){saveStationName('${s.id}', this.value)}"
+                                        autofocus>
+                                ` : `
+                                    <span class="station-name">${s.name}</span>
+                                `}
+                                <button class="edit-btn" onclick="event.stopPropagation(); ${isEditing ? `saveStationName('${s.id}')` : `startEditingStation('${s.id}')`}" title="Namen bearbeiten">
+                                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        ${isEditing ? 
+                                            '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>' :
+                                            '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>'
+                                        }
+                                    </svg>
+                                </button>
+                                ${isCritical ? '<span class="station-badge">Keine Kapazität</span>' : ''}
+                            </div>
+                            <div class="station-meta-row">
+                                <span class="station-time">${s.lastCheck}</span>
+                                ${s.phone ? `<span class="phone-badge">📞 <a href="tel:${s.phone}">${s.phone}</a></span>` : ''}
+                            </div>
+                        </div>
+                        <div class="station-actions">
+                            <button class="expand-btn" onclick="toggleStation('${s.id}')" title="Details">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
                             </button>
                         </div>
-                    </td>
-                `;
-            } else {
-                tr.innerHTML = `
-                    ${dragHandle}
-                    <td class="p-6 font-black text-slate-900">${s.name}</td>
-                    <td class="p-6 text-center">
-                        <select onchange="updateVal('${s.id}', 'isoType', this.value)" class="p-3 rounded-2xl bg-white font-black outline-none text-[11px] uppercase shadow-sm border-2 border-slate-200 focus:border-[#82bc00] text-slate-900">
-                            ${['Keine', 'MRSA', 'Noro', 'Influenza', 'Corona', 'Andere'].map(t => `<option ${s.isoType === t ? 'selected' : ''}>${t}</option>`).join('')}
-                        </select>
-                    </td>
-                    <td class="p-6 text-center">
-                        ${createStepper(s.id, 'isoCount', s.isoCount, 'bg-amber-50', 'text-amber-900')}
-                    </td>
-                    <td class="p-6 text-center text-[11px] font-black text-slate-700">${s.lastCheck}</td>
-                    <td class="p-6 text-right no-print">
-                        <button onclick="deleteStation('${s.id}')" class="opacity-0 group-hover:opacity-100 p-4 bg-white rounded-2xl shadow-lg text-red-500 hover:bg-red-500 hover:text-white border border-slate-200 transition-all">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                    </div>
+                    
+                    <div class="station-controls-row">
+                        <div class="inline-stepper">
+                            <span class="inline-stepper-label blue">M</span>
+                            <button class="inline-stepper-btn" onclick="stepVal('${s.id}', 'm', -1)">−</button>
+                            <input type="number" class="inline-stepper-value" value="${s.m}" 
+                                onchange="updateVal('${s.id}', 'm', this.value)" style="color: #60a5fa;">
+                            <button class="inline-stepper-btn" onclick="stepVal('${s.id}', 'm', 1)">+</button>
+                        </div>
+                        <div class="inline-stepper">
+                            <span class="inline-stepper-label pink">W</span>
+                            <button class="inline-stepper-btn" onclick="stepVal('${s.id}', 'w', -1)">−</button>
+                            <input type="number" class="inline-stepper-value" value="${s.w}" 
+                                onchange="updateVal('${s.id}', 'w', this.value)" style="color: #f472b6;">
+                            <button class="inline-stepper-btn" onclick="stepVal('${s.id}', 'w', 1)">+</button>
+                        </div>
+                        <div class="inline-stepper">
+                            <span class="inline-stepper-label amber">Z</span>
+                            <button class="inline-stepper-btn" onclick="stepVal('${s.id}', 'rooms', -1)">−</button>
+                            <input type="number" class="inline-stepper-value" value="${s.rooms}" 
+                                onchange="updateVal('${s.id}', 'rooms', this.value)" style="color: #fbbf24;">
+                            <button class="inline-stepper-btn" onclick="stepVal('${s.id}', 'rooms', 1)">+</button>
+                        </div>
+                    </div>
+                    
+                    <div class="station-body">
+                        <div class="field-grid">
+                            <div class="field-group">
+                                <span class="field-label">Entlassungen</span>
+                                <div class="stepper">
+                                    <button class="stepper-btn" onclick="stepVal('${s.id}', 'entl', -1)">−</button>
+                                    <input type="number" class="stepper-value green" value="${s.entl}" onchange="updateVal('${s.id}', 'entl', this.value)">
+                                    <button class="stepper-btn" onclick="stepVal('${s.id}', 'entl', 1)">+</button>
+                                </div>
+                            </div>
+                            <div class="field-group">
+                                <span class="field-label">ISO Plätze</span>
+                                <div class="stepper">
+                                    <button class="stepper-btn" onclick="stepVal('${s.id}', 'isoCount', -1)">−</button>
+                                    <input type="number" class="stepper-value amber" value="${s.isoCount}" onchange="updateVal('${s.id}', 'isoCount', this.value)">
+                                    <button class="stepper-btn" onclick="stepVal('${s.id}', 'isoCount', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field-group" style="margin-top: 12px;">
+                            <span class="field-label">Isolation Typ</span>
+                            <select class="iso-type-select" style="width: 100%;" onchange="updateVal('${s.id}', 'isoType', this.value)">
+                                ${['Keine', 'MRSA', 'Noro', 'Influenza', 'Corona', 'Andere'].map(t => 
+                                    `<option ${s.isoType === t ? 'selected' : ''}>${t}</option>`
+                                ).join('')}
+                            </select>
+                        </div>
+                        <div class="field-group" style="margin-top: 12px;">
+                            <span class="field-label">📞 Telefonnummer</span>
+                            <input type="tel" class="phone-input" placeholder="z.B. 0203-546-1234" 
+                                value="${s.phone || ''}" 
+                                onchange="updatePhone('${s.id}', this.value)">
+                        </div>
+                        <div class="notes-section" style="border: none; padding-top: 0; margin-top: 12px;">
+                            <span class="field-label">📝 Notizen</span>
+                            <textarea class="notes-textarea" placeholder="Besonderheiten, Hinweise..." 
+                                onchange="updateNotes('${s.id}', this.value)">${s.notes || ''}</textarea>
+                        </div>
+                        <button class="check-btn" onclick="markChecked('${s.id}')">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            Jetzt checken
                         </button>
-                    </td>
+                        <button class="delete-btn" onclick="deleteStation('${s.id}')">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                            </svg>
+                            Station löschen
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            // Add spacer for bottom actions
+            const spacer = document.createElement('div');
+            spacer.style.height = '100px';
+            container.appendChild(spacer);
+        }
+
+        function renderQuickView(container) {
+            const grid = document.createElement('div');
+            grid.className = 'quick-grid';
+            
+            let hasContent = false;
+            
+            appState.stations.forEach(s => {
+                const totalFree = (Number(s.m) || 0) + (Number(s.w) || 0) + (Number(s.rooms) || 0);
+                if (totalFree === 0 && (Number(s.isoCount) || 0) === 0) return;
+                
+                hasContent = true;
+                const card = document.createElement('div');
+                card.className = 'quick-card liquid-glass';
+                
+                let statsHtml = '';
+                if (s.m > 0) statsHtml += `<div class="quick-stat male"><div class="quick-stat-label">Männer</div><div class="quick-stat-value blue">${s.m}</div></div>`;
+                if (s.w > 0) statsHtml += `<div class="quick-stat female"><div class="quick-stat-label">Frauen</div><div class="quick-stat-value pink">${s.w}</div></div>`;
+                if (s.rooms > 0) statsHtml += `<div class="quick-stat room"><div class="quick-stat-label">Zimmer</div><div class="quick-stat-value amber">${s.rooms}</div></div>`;
+                if (s.isoCount > 0) statsHtml += `<div class="quick-stat iso"><div class="quick-stat-label">ISO (${s.isoType})</div><div class="quick-stat-value" style="color: #ef4444;">${s.isoCount}</div></div>`;
+                
+                card.innerHTML = `
+                    <div class="quick-card-header">
+                        <div>
+                            <span class="quick-card-title">${s.name}</span>
+                            ${s.phone ? `<div class="phone-badge" style="margin-top: 6px; display: inline-flex;">📞 <a href="tel:${s.phone}">${s.phone}</a></div>` : ''}
+                        </div>
+                        <span class="quick-card-time">${s.lastCheck}</span>
+                    </div>
+                    <div class="quick-stats">${statsHtml}</div>
+                `;
+                grid.appendChild(card);
+            });
+
+            if (!hasContent) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📋</div>
+                        <div class="empty-state-text">Keine Kapazitäten gemeldet</div>
+                    </div>
                 `;
             }
-            body.appendChild(tr);
-        });
-    }
 
-    loadData();
-</script>
+            container.appendChild(grid);
+
+            // Add spacer
+            const spacer = document.createElement('div');
+            spacer.style.height = '100px';
+            container.appendChild(spacer);
+        }
+
+        function renderIsoView(container) {
+            appState.stations.forEach(s => {
+                const card = document.createElement('div');
+                card.className = 'iso-card liquid-glass';
+                
+                card.innerHTML = `
+                    <div class="iso-header">
+                        <span class="station-name">${s.name}</span>
+                        <select class="iso-type-select" onchange="updateVal('${s.id}', 'isoType', this.value)">
+                            ${['Keine', 'MRSA', 'Noro', 'Influenza', 'Corona', 'Andere'].map(t => 
+                                `<option ${s.isoType === t ? 'selected' : ''}>${t}</option>`
+                            ).join('')}
+                        </select>
+                    </div>
+                    <div class="field-group" style="margin-bottom: 0;">
+                        <span class="field-label">Isolationsplätze frei</span>
+                        <div class="stepper">
+                            <button class="stepper-btn" onclick="stepVal('${s.id}', 'isoCount', -1)">−</button>
+                            <input type="number" class="stepper-value amber" value="${s.isoCount}" onchange="updateVal('${s.id}', 'isoCount', this.value)">
+                            <button class="stepper-btn" onclick="stepVal('${s.id}', 'isoCount', 1)">+</button>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.1);">
+                        <span class="station-time">Letzter Check: ${s.lastCheck}</span>
+                        <button class="delete-btn" style="width: auto; margin: 0; padding: 10px 16px;" onclick="deleteStation('${s.id}')">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                            </svg>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            // Add spacer
+            const spacer = document.createElement('div');
+            spacer.style.height = '100px';
+            container.appendChild(spacer);
+        }
+
+        // Enter key for input
+        document.getElementById('add-station-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') addStation();
+        });
+
+        // Notes
+        window.updateNotes = function(id, notes) {
+            const station = appState.stations.find(s => s.id === id);
+            if (station) {
+                station.notes = notes;
+                saveData();
+            }
+        };
+
+        // Phone
+        window.updatePhone = function(id, phone) {
+            const station = appState.stations.find(s => s.id === id);
+            if (station) {
+                station.phone = phone;
+                saveData();
+            }
+        };
+
+        // Edit Station Name
+        window.startEditingStation = function(id) {
+            appState.editingStation = id;
+            render();
+            // Focus the input after render
+            setTimeout(() => {
+                const input = document.querySelector('.station-name-input');
+                if (input) {
+                    input.focus();
+                    input.select();
+                }
+            }, 50);
+        };
+
+        window.saveStationName = function(id, newName) {
+            const station = appState.stations.find(s => s.id === id);
+            if (station && newName && newName.trim()) {
+                station.name = newName.trim();
+            }
+            appState.editingStation = null;
+            saveData();
+            render();
+            showToast('Name gespeichert');
+        };
+
+        // Drag and Drop
+        let draggedId = null;
+
+        window.handleDragStart = function(e, id) {
+            draggedId = id;
+            e.dataTransfer.effectAllowed = 'move';
+            e.currentTarget.classList.add('dragging');
+        };
+
+        window.handleDragEnd = function(e) {
+            e.currentTarget.classList.remove('dragging');
+            document.querySelectorAll('.station-card').forEach(card => {
+                card.classList.remove('drag-over');
+            });
+            draggedId = null;
+        };
+
+        window.handleDragOver = function(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            const card = e.currentTarget;
+            if (!card.classList.contains('dragging')) {
+                card.classList.add('drag-over');
+            }
+        };
+
+        window.handleDragLeave = function(e) {
+            e.currentTarget.classList.remove('drag-over');
+        };
+
+        window.handleDrop = function(e, targetId) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('drag-over');
+            
+            if (draggedId === targetId || !draggedId) return;
+            
+            const draggedIdx = appState.stations.findIndex(s => s.id === draggedId);
+            const targetIdx = appState.stations.findIndex(s => s.id === targetId);
+            
+            if (draggedIdx === -1 || targetIdx === -1) return;
+            
+            const [movedItem] = appState.stations.splice(draggedIdx, 1);
+            appState.stations.splice(targetIdx, 0, movedItem);
+            
+            saveData();
+            render();
+            showToast('Station verschoben');
+        };
+
+        // Theme Toggle
+        window.toggleTheme = function() {
+            const isLight = document.body.classList.toggle('light-mode');
+            appState.theme = isLight ? 'light' : 'dark';
+            saveData();
+        };
+
+        function applyTheme() {
+            if (appState.theme === 'light') {
+                document.body.classList.add('light-mode');
+            } else {
+                document.body.classList.remove('light-mode');
+            }
+        }
+
+        // Shift History
+        window.openHistoryPanel = function() {
+            renderHistoryList();
+            document.getElementById('history-panel').classList.add('active');
+        };
+
+        window.closeHistoryPanel = function() {
+            document.getElementById('history-panel').classList.remove('active');
+        };
+
+        function renderHistoryList() {
+            const list = document.getElementById('history-list');
+            const history = appState.shiftHistory || [];
+            
+            if (history.length === 0) {
+                list.innerHTML = `
+                    <div class="history-empty">
+                        <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;">📋</div>
+                        <div>Noch keine Schicht-Historie vorhanden.</div>
+                        <div style="margin-top: 8px; font-size: 12px;">Nach jedem Reset wird ein Eintrag erstellt.</div>
+                    </div>
+                `;
+                return;
+            }
+
+            list.innerHTML = history.slice().reverse().map(entry => `
+                <div class="history-item">
+                    <div class="history-item-header">
+                        <span class="history-item-date">${entry.date}</span>
+                        <span class="history-item-status">${entry.znaStatus}</span>
+                    </div>
+                    <div class="history-item-stats">
+                        <span class="history-stat">🛏️ M: <strong>${entry.totalM}</strong></span>
+                        <span class="history-stat">🛏️ W: <strong>${entry.totalW}</strong></span>
+                        <span class="history-stat">🚪 Zi: <strong>${entry.totalRooms}</strong></span>
+                        <span class="history-stat">☣️ ISO: <strong>${entry.totalIso}</strong></span>
+                        <span class="history-stat">✅ Entl: <strong>${entry.totalEntl}</strong></span>
+                    </div>
+                    ${entry.stationsWithCapacity.length > 0 ? `
+                        <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.1);">
+                            <div style="font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Stationen mit Kapazität</div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">${entry.stationsWithCapacity.join(', ')}</div>
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        function saveShiftToHistory() {
+            let totalM = 0, totalW = 0, totalRooms = 0, totalIso = 0, totalEntl = 0;
+            const stationsWithCapacity = [];
+
+            appState.stations.forEach(s => {
+                const m = Number(s.m) || 0;
+                const w = Number(s.w) || 0;
+                const rooms = Number(s.rooms) || 0;
+                const iso = Number(s.isoCount) || 0;
+                const entl = Number(s.entl) || 0;
+                
+                totalM += m;
+                totalW += w;
+                totalRooms += rooms;
+                totalIso += iso;
+                totalEntl += entl;
+
+                if (m + w + rooms > 0) {
+                    stationsWithCapacity.push(s.name);
+                }
+            });
+
+            // Only save if there was any activity
+            if (totalM + totalW + totalRooms + totalIso + totalEntl > 0) {
+                if (!appState.shiftHistory) appState.shiftHistory = [];
+                
+                appState.shiftHistory.push({
+                    date: new Date().toLocaleString('de-DE'),
+                    znaStatus: appState.znaStatus.label,
+                    totalM, totalW, totalRooms, totalIso, totalEntl,
+                    stationsWithCapacity
+                });
+
+                // Keep only last 30 entries
+                if (appState.shiftHistory.length > 30) {
+                    appState.shiftHistory = appState.shiftHistory.slice(-30);
+                }
+            }
+        }
+
+        // Share Functions
+        window.openShareModal = function() {
+            document.getElementById('share-modal').classList.add('active');
+        };
+
+        window.closeShareModal = function(e) {
+            if (!e || e.target === e.currentTarget) {
+                document.getElementById('share-modal').classList.remove('active');
+            }
+        };
+
+        function getStatusText() {
+            let text = `🏥 BETTEN-RADAR HELIOS DUISBURG\n`;
+            text += `📅 Stand: ${new Date().toLocaleString('de-DE')}\n`;
+            text += `🚨 ZNA: ${appState.znaStatus.label.toUpperCase()}\n\n`;
+            
+            appState.stations.forEach(s => {
+                const free = (Number(s.m)||0) + (Number(s.w)||0) + (Number(s.rooms)||0);
+                if(free > 0 || (Number(s.isoCount)||0) > 0) {
+                    text += `${s.name}`;
+                    if(s.phone) text += ` (📞 ${s.phone})`;
+                    text += `: M:${s.m} | W:${s.w} | Z:${s.rooms}`;
+                    if(s.isoCount > 0) text += ` | ISO:${s.isoCount}(${s.isoType})`;
+                    text += ` (${s.lastCheck})`;
+                    if(s.notes) text += `\n   📝 ${s.notes}`;
+                    text += `\n`;
+                }
+            });
+            
+            return text;
+        }
+
+        window.shareViaWhatsApp = function() {
+            const text = encodeURIComponent(getStatusText());
+            window.open(`https://wa.me/?text=${text}`, '_blank');
+            closeShareModal();
+        };
+
+        window.shareViaEmail = function() {
+            const subject = encodeURIComponent(`Betten-Radar Status - ${new Date().toLocaleDateString('de-DE')}`);
+            const body = encodeURIComponent(getStatusText());
+            window.location.href = `mailto:?subject=${subject}&body=${body}`;
+            closeShareModal();
+        };
+
+        // Init
+        loadData();
+    </script>
 </body>
 </html>
